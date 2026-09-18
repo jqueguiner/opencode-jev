@@ -117,7 +117,12 @@ function isTaskKind(value: string): value is TaskKind {
   return value === "design" || value === "coding" || value === "reasoning" || value === "research" || value === "chat"
 }
 
-export function resolveApiKey(env: NodeJS.ProcessEnv = process.env): string | undefined {
+export function resolveApiKey(
+  explicit?: string,
+  env: NodeJS.ProcessEnv = process.env,
+): string | undefined {
+  const fromOption = explicit?.trim()
+  if (fromOption) return fromOption
   const key = env.TYPESAFE_API_KEY?.trim()
   return key || undefined
 }

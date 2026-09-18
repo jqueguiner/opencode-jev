@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import { DEFAULT_CATALOG, blendPrice } from "../src/catalog"
 import { heuristicJudgment, selectModel } from "../src/select"
-import { parseJudgment } from "../src/typesafe"
+import { parseJudgment, resolveApiKey } from "../src/typesafe"
 import { extractText } from "../src/route"
 
 describe("selectModel", () => {
@@ -86,6 +86,15 @@ describe("parseJudgment", () => {
     expect(j.kind).toBe("design")
     expect(j.complexity).toBe(3.2)
     expect(j.kindConfidence).toBe(0.88)
+  })
+})
+
+describe("resolveApiKey", () => {
+  test("prefers explicit config key over env", () => {
+    const { resolveApiKey } = require("../src/typesafe") as typeof import("../src/typesafe")
+    expect(resolveApiKey("from-config", { TYPESAFE_API_KEY: "from-env" })).toBe("from-config")
+    expect(resolveApiKey(undefined, { TYPESAFE_API_KEY: "from-env" })).toBe("from-env")
+    expect(resolveApiKey("  ", {})).toBeUndefined()
   })
 })
 

@@ -5,6 +5,10 @@ import { judgePrompt, resolveApiKey } from "./typesafe"
 export type RouterOptions = {
   /** When false, plugin is a no-op. Default true. */
   enabled?: boolean
+  /** TypeSafe API key. Prefer `{env:TYPESAFE_API_KEY}` in opencode.json. */
+  typesafeApiKey?: string
+  /** Alias for `typesafeApiKey`. */
+  apiKey?: string
   /** Override default OpenRouter catalog. */
   catalog?: CatalogEntry[]
   /** If true (default), always route. If false, skip when user already set a non-openrouter model. */
@@ -27,7 +31,7 @@ export type RouteResult = {
 
 export async function routePrompt(prompt: string, options: RouterOptions = {}): Promise<RouteResult | undefined> {
   const catalog = options.catalog ?? DEFAULT_CATALOG
-  const apiKey = resolveApiKey()
+  const apiKey = resolveApiKey(options.typesafeApiKey ?? options.apiKey)
   let judgment: Judgment
   let source: "jev" | "heuristic"
 

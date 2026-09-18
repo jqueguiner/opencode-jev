@@ -3,7 +3,9 @@
   "model": "openrouter/z-ai/glm-5.3-flash",
   "provider": {
     "openrouter": {
-      "options": {}
+      "options": {
+        "apiKey": "{env:OPENROUTER_API_KEY}"
+      }
     }
   },
   "plugin": [
@@ -12,7 +14,8 @@
       {
         "enabled": true,
         "force": true,
-        "log": true
+        "log": true,
+        "typesafeApiKey": "{env:TYPESAFE_API_KEY}"
       }
     ]
   ]

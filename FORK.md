@@ -38,12 +38,26 @@ This fork enables the router in `.opencode/opencode.jsonc`:
 ```jsonc
 {
   "model": "openrouter/z-ai/glm-5.3-flash",
-  "provider": { "openrouter": { "options": {} } },
+  "provider": {
+    "openrouter": {
+      "options": { "apiKey": "{env:OPENROUTER_API_KEY}" }
+    }
+  },
   "plugin": [
-    ["../packages/jev-router/src/index.ts", { "enabled": true, "force": true, "log": true }]
+    [
+      "../packages/jev-router/src/index.ts",
+      {
+        "enabled": true,
+        "force": true,
+        "log": true,
+        "typesafeApiKey": "{env:TYPESAFE_API_KEY}"
+      }
+    ]
   ]
 }
 ```
+
+OpenCode substitutes `{env:NAME}` when loading config. You can also paste a literal key, or use `{file:~/.config/typesafe/key}` if you keep secrets on disk.
 
 ```bash
 export TYPESAFE_API_KEY=...
@@ -54,13 +68,14 @@ bun run --cwd packages/jev-router test
 bun run --cwd packages/opencode src/index.ts
 ```
 
-In another project, point `plugin` at the package path (or copy the entry from `examples/jev-router/opencode.json`).
+In another project, copy the `provider` + `plugin` block from `examples/jev-router/opencode.json`.
 
 ## Plugin options
 
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `enabled` | `true` | Master switch |
+| `typesafeApiKey` / `apiKey` | env `TYPESAFE_API_KEY` | TypeSafe key (use `{env:TYPESAFE_API_KEY}` in config) |
 | `force` | `true` | Route even if current model is not OpenRouter |
 | `log` | `true` | Print routing decisions to stderr |
 | `heuristicFallback` | `true` | Keyword fallback without TypeSafe |

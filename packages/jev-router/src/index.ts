@@ -10,12 +10,18 @@ export { routePrompt, extractText } from "./route"
  * OpenCode plugin: before each user turn, ask TypeSafe Jev for task kind +
  * complexity, then set `message.model` to the cheapest fitting OpenRouter model.
  *
- * Requires `OPENROUTER_API_KEY` for inference and `TYPESAFE_API_KEY` for routing
- * (falls back to heuristics if TypeSafe is missing).
+ * Requires OpenRouter for inference and TypeSafe for routing. Keys can live in
+ * opencode.json (with `{env:...}` substitution) or the process environment.
  *
  * opencode.json:
  * ```json
- * { "plugin": [["@opencode-ai/jev-router", { "enabled": true }]] }
+ * {
+ *   "provider": { "openrouter": { "options": { "apiKey": "{env:OPENROUTER_API_KEY}" } } },
+ *   "plugin": [["@opencode-ai/jev-router", {
+ *     "enabled": true,
+ *     "typesafeApiKey": "{env:TYPESAFE_API_KEY}"
+ *   }]]
+ * }
  * ```
  */
 const plugin: Plugin = async (_input, options: RouterOptions = {}) => {
