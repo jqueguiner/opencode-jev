@@ -13,20 +13,48 @@ export type Selection = {
   reason: string
 }
 
+export type SelectOptions = {
+  /** Per-kind OpenRouter model pins, e.g. `{ coding: "z-ai/glm-5.3" }`. */
+  defaults?: Partial<Record<TaskKind, string>>
+}
+
 const KIND_FALLBACK: TaskKind = "coding"
+
+/** Accept `z-ai/glm-5.3` or `openrouter/z-ai/glm-5.3`. */
+export function normalizeModelID(raw: string): string {
+  const id = raw.trim()
+  if (id.startsWith("openrouter/")) return id.slice("openrouter/".length)
+  return id
+}
 
 /**
  * Pick an OpenRouter model for a Jev judgment.
  *
- * 1. Prefer the kind's preferred family (design→Astra, coding→GLM) when any
- *    member meets complexity.
+ * 0. If `defaults[kind]` is set and that model is eligible, pin to it.
+ * 1. Else prefer the kind's preferred family (design→Astra, coding→GLM).
  * 2. Within that pool, take the highest minComplexity still ≤ judgment
  *    (escalate capacity with difficulty), then the cheapest blend price.
  * 3. If no preferred models qualify, repeat over all role-eligible models.
  */
-export function selectModel(catalog: CatalogEntry[], judgment: Judgment): Selection | undefined {
+export function selectModel(
+  catalog: CatalogEntry[],
+  judgment: Judgment,
+  options: SelectOptions = {},
+): Selection | undefined {
   const kind = judgment.kind
   const complexity = clamp(judgment.complexity, 0, 4)
+
+  const pinnedID = options.defaults?.[kind]
+  if (pinnedID) {
+    const id = normalizeModelID(pinnedID)
+    const pinned = catalog.find((e) => e.modelID === id)
+    if (pinned && pinned.roles.includes(kind) && pinned.minComplexity <= complexity) {
+      return {
+        entry: pinned,
+        reason: `kind=${kind} complexity=${complexity.toFixed(2)} default pin → ${pinned.modelID}`,
+      }
+    }
+  }
 
   const byRole = catalog.filter((e) => e.roles.includes(kind) && e.minComplexity <= complexity)
   const preferred = byRole.filter((e) => e.preferredFor?.includes(kind))

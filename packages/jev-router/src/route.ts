@@ -1,4 +1,4 @@
-import { DEFAULT_CATALOG, type CatalogEntry } from "./catalog"
+import { DEFAULT_CATALOG, type CatalogEntry, type TaskKind } from "./catalog"
 import { heuristicJudgment, selectModel, type Judgment } from "./select"
 import { judgePrompt, resolveApiKey } from "./typesafe"
 
@@ -9,6 +9,18 @@ export type RouterOptions = {
   typesafeApiKey?: string
   /** Alias for `typesafeApiKey`. */
   apiKey?: string
+  /**
+   * Pin the coding model (OpenRouter slug), e.g. `"z-ai/glm-5.3"`.
+   * Shorthand for `defaults.coding`.
+   */
+  defaultCodingModel?: string
+  /**
+   * Pin the design model (OpenRouter slug), e.g. `"openai/gpt-6-astra"`.
+   * Shorthand for `defaults.design`.
+   */
+  defaultDesignModel?: string
+  /** Per-kind OpenRouter model pins. */
+  defaults?: Partial<Record<TaskKind, string>>
   /** Override default OpenRouter catalog. */
   catalog?: CatalogEntry[]
   /** If true (default), always route. If false, skip when user already set a non-openrouter model. */
@@ -27,6 +39,14 @@ export type RouteResult = {
   judgment: Judgment
   reason: string
   source: "jev" | "heuristic"
+}
+
+function resolveDefaults(options: RouterOptions): Partial<Record<TaskKind, string>> {
+  return {
+    ...options.defaults,
+    ...(options.defaultCodingModel ? { coding: options.defaultCodingModel } : {}),
+    ...(options.defaultDesignModel ? { design: options.defaultDesignModel } : {}),
+  }
 }
 
 export async function routePrompt(prompt: string, options: RouterOptions = {}): Promise<RouteResult | undefined> {
@@ -60,7 +80,7 @@ export async function routePrompt(prompt: string, options: RouterOptions = {}): 
     return undefined
   }
 
-  const selected = selectModel(catalog, judgment)
+  const selected = selectModel(catalog, judgment, { defaults: resolveDefaults(options) })
   if (!selected) return undefined
 
   return {

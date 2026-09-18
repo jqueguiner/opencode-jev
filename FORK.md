@@ -11,7 +11,8 @@ On each user message, the `@opencode-ai/jev-router` plugin:
 1. Sends the prompt to TypeSafe System One (`jev-latest`)
 2. Asks for **task kind** (`design` | `coding` | `reasoning` | `research` | `chat`) and **complexity** (0–4)
 3. Picks from a curated OpenRouter catalog by:
-   - preferred family: **design → OpenAI Astra**, **coding → GLM**
+   - optional **pins** via `defaultCodingModel` / `defaultDesignModel` / `defaults`
+   - else preferred family: **design → OpenAI Astra**, **coding → GLM**
    - escalate capacity with complexity (highest `minComplexity` still ≤ score)
    - then cheapest blended price at that tier
 4. Sets `message.model` to `{ providerID: "openrouter", modelID: "<slug>" }` for that turn
@@ -50,7 +51,9 @@ This fork enables the router in `.opencode/opencode.jsonc`:
         "enabled": true,
         "force": true,
         "log": true,
-        "typesafeApiKey": "{env:TYPESAFE_API_KEY}"
+        "typesafeApiKey": "{env:TYPESAFE_API_KEY}",
+        "defaultCodingModel": "z-ai/glm-5.3",
+        "defaultDesignModel": "openai/gpt-6-astra"
       }
     ]
   ]

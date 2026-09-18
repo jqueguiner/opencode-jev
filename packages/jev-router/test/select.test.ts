@@ -63,6 +63,36 @@ describe("selectModel", () => {
     })
     expect(result?.entry.modelID).toBe("openai/gpt-6-astra-pro")
   })
+
+  test("defaultCodingModel pins coding when complexity allows", () => {
+    const result = selectModel(
+      DEFAULT_CATALOG,
+      {
+        kind: "coding",
+        kindConfidence: 0.9,
+        complexity: 2.5,
+        complexityConfidence: 0.8,
+      },
+      { defaults: { coding: "openrouter/z-ai/glm-5.3" } },
+    )
+    expect(result?.entry.modelID).toBe("z-ai/glm-5.3")
+    expect(result?.reason).toContain("default pin")
+  })
+
+  test("defaultCodingModel falls back when complexity is below model floor", () => {
+    const result = selectModel(
+      DEFAULT_CATALOG,
+      {
+        kind: "coding",
+        kindConfidence: 0.9,
+        complexity: 0.4,
+        complexityConfidence: 0.8,
+      },
+      { defaults: { coding: "z-ai/glm-5.3" } },
+    )
+    // glm-5.3 needs minComplexity 2; trivial coding uses auto escalation instead
+    expect(result?.entry.modelID).toBe("z-ai/glm-5.3-flash")
+  })
 })
 
 describe("heuristicJudgment", () => {
@@ -91,7 +121,6 @@ describe("parseJudgment", () => {
 
 describe("resolveApiKey", () => {
   test("prefers explicit config key over env", () => {
-    const { resolveApiKey } = require("../src/typesafe") as typeof import("../src/typesafe")
     expect(resolveApiKey("from-config", { TYPESAFE_API_KEY: "from-env" })).toBe("from-config")
     expect(resolveApiKey(undefined, { TYPESAFE_API_KEY: "from-env" })).toBe("from-env")
     expect(resolveApiKey("  ", {})).toBeUndefined()

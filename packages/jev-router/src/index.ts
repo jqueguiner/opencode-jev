@@ -3,7 +3,7 @@ import { extractText, routePrompt, type RouterOptions } from "./route"
 
 export type { RouterOptions, RouteResult } from "./route"
 export { DEFAULT_CATALOG, blendPrice, type CatalogEntry, type TaskKind } from "./catalog"
-export { selectModel, heuristicJudgment } from "./select"
+export { selectModel, heuristicJudgment, normalizeModelID } from "./select"
 export { routePrompt, extractText } from "./route"
 
 /**
@@ -19,7 +19,9 @@ export { routePrompt, extractText } from "./route"
  *   "provider": { "openrouter": { "options": { "apiKey": "{env:OPENROUTER_API_KEY}" } } },
  *   "plugin": [["@opencode-ai/jev-router", {
  *     "enabled": true,
- *     "typesafeApiKey": "{env:TYPESAFE_API_KEY}"
+ *     "typesafeApiKey": "{env:TYPESAFE_API_KEY}",
+ *     "defaultCodingModel": "z-ai/glm-5.3",
+ *     "defaultDesignModel": "openai/gpt-6-astra"
  *   }]]
  * }
  * ```

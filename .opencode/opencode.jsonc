@@ -16,6 +16,8 @@
         "force": true,
         "log": true,
         "typesafeApiKey": "{env:TYPESAFE_API_KEY}",
+        "defaultCodingModel": "z-ai/glm-5.3",
+        "defaultDesignModel": "openai/gpt-6-astra",
       },
     ],
   ],
