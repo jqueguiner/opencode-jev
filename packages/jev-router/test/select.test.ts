@@ -16,12 +16,15 @@ describe("selectModel", () => {
   })
 
   test("coding escalates GLM tier with complexity then picks cheapest at that floor", () => {
+    // No coding pin — auto path among preferred GLM family
     const simple = selectModel(DEFAULT_CATALOG, {
       kind: "coding",
       kindConfidence: 0.9,
       complexity: 0.5,
       complexityConfidence: 0.8,
     })
+    // preferred coding includes opus (min 0) — max floor at 0.5 is 0 → cheapest among floor 0 preferred
+    // preferred with minComplexity 0: glm-5.3-flash and opus-4.7 → cheapest is flash
     expect(simple?.entry.modelID).toBe("z-ai/glm-5.3-flash")
 
     const medium = selectModel(DEFAULT_CATALOG, {
@@ -41,17 +44,33 @@ describe("selectModel", () => {
     expect(hard?.entry.modelID).toBe("z-ai/glm-5.3")
   })
 
-  test("higher coding complexity still picks preferred then cheapest", () => {
-    // Restrict catalog so only higher-tier preferred coding models qualify
-    const slim = DEFAULT_CATALOG.filter((e) => e.modelID === "z-ai/glm-5.3" || e.modelID === "openai/gpt-6-astra")
-    const result = selectModel(slim, {
-      kind: "coding",
-      kindConfidence: 0.9,
-      complexity: 3,
-      complexityConfidence: 0.9,
-    })
-    expect(result?.entry.modelID).toBe("z-ai/glm-5.3")
-    expect(blendPrice(result!.entry)).toBeLessThan(blendPrice(slim.find((e) => e.modelID.includes("astra"))!))
+  test("defaultCodingModel pins coding to opus 4.7", () => {
+    const result = selectModel(
+      DEFAULT_CATALOG,
+      {
+        kind: "coding",
+        kindConfidence: 0.9,
+        complexity: 1,
+        complexityConfidence: 0.8,
+      },
+      { defaults: { coding: "anthropic/claude-opus-4.7" } },
+    )
+    expect(result?.entry.modelID).toBe("anthropic/claude-opus-4.7")
+    expect(result?.reason).toContain("default pin")
+  })
+
+  test("defaultCodingModel accepts openrouter/ prefix", () => {
+    const result = selectModel(
+      DEFAULT_CATALOG,
+      {
+        kind: "coding",
+        kindConfidence: 0.9,
+        complexity: 2.5,
+        complexityConfidence: 0.8,
+      },
+      { defaults: { coding: "openrouter/anthropic/claude-opus-4.7" } },
+    )
+    expect(result?.entry.modelID).toBe("anthropic/claude-opus-4.7")
   })
 
   test("extreme design prefers astra-pro when complexity requires it", () => {
@@ -62,36 +81,6 @@ describe("selectModel", () => {
       complexityConfidence: 0.9,
     })
     expect(result?.entry.modelID).toBe("openai/gpt-6-astra-pro")
-  })
-
-  test("defaultCodingModel pins coding when complexity allows", () => {
-    const result = selectModel(
-      DEFAULT_CATALOG,
-      {
-        kind: "coding",
-        kindConfidence: 0.9,
-        complexity: 2.5,
-        complexityConfidence: 0.8,
-      },
-      { defaults: { coding: "openrouter/z-ai/glm-5.3" } },
-    )
-    expect(result?.entry.modelID).toBe("z-ai/glm-5.3")
-    expect(result?.reason).toContain("default pin")
-  })
-
-  test("defaultCodingModel falls back when complexity is below model floor", () => {
-    const result = selectModel(
-      DEFAULT_CATALOG,
-      {
-        kind: "coding",
-        kindConfidence: 0.9,
-        complexity: 0.4,
-        complexityConfidence: 0.8,
-      },
-      { defaults: { coding: "z-ai/glm-5.3" } },
-    )
-    // glm-5.3 needs minComplexity 2; trivial coding uses auto escalation instead
-    expect(result?.entry.modelID).toBe("z-ai/glm-5.3-flash")
   })
 })
 

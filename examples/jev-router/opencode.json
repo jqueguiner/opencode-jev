@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "openrouter/z-ai/glm-5.3-flash",
+  "model": "openrouter/anthropic/claude-opus-4.7",
   "provider": {
     "openrouter": {
       "options": {
@@ -16,7 +16,7 @@
         "force": true,
         "log": true,
         "typesafeApiKey": "{env:TYPESAFE_API_KEY}",
-        "defaultCodingModel": "z-ai/glm-5.3",
+        "defaultCodingModel": "anthropic/claude-opus-4.7",
         "defaultDesignModel": "openai/gpt-6-astra"
       }
     ]

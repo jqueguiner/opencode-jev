@@ -20,7 +20,7 @@ export { routePrompt, extractText } from "./route"
  *   "plugin": [["@opencode-ai/jev-router", {
  *     "enabled": true,
  *     "typesafeApiKey": "{env:TYPESAFE_API_KEY}",
- *     "defaultCodingModel": "z-ai/glm-5.3",
+ *     "defaultCodingModel": "anthropic/claude-opus-4.7",
  *     "defaultDesignModel": "openai/gpt-6-astra"
  *   }]]
  * }

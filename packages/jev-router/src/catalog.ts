@@ -99,6 +99,15 @@ export const DEFAULT_CATALOG: CatalogEntry[] = [
     outputPerMTok: 10.0,
   },
   {
+    modelID: "anthropic/claude-opus-4.7",
+    providerID: PROVIDER_ID,
+    roles: ["coding", "reasoning", "research"],
+    minComplexity: 0,
+    inputPerMTok: 5.0,
+    outputPerMTok: 25.0,
+    preferredFor: ["coding"],
+  },
+  {
     modelID: "openai/gpt-6-astra",
     providerID: PROVIDER_ID,
     roles: ["design", "reasoning", "research", "coding"],

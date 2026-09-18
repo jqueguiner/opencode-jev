@@ -25,7 +25,8 @@ If `TYPESAFE_API_KEY` is missing, a local keyword heuristic is used instead.
 | --- | --- | --- | --- |
 | `z-ai/glm-5.3-flash` | coding, chat | 0 | Cheap coding |
 | `z-ai/glm-5.2` | coding, chat | 1 | Mid GLM |
-| `z-ai/glm-5.3` | coding, reasoning | 2 | Strong coding default |
+| `z-ai/glm-5.3` | coding, reasoning | 2 | Strong GLM coding |
+| `anthropic/claude-opus-4.7` | coding, reasoning, research | 0 | Default coding pin |
 | `openai/gpt-6-astra` | design (+ others) | 2 | Design default |
 | `openai/gpt-6-astra-pro` | design, reasoning, research | 4 | Extreme design |
 | plus DeepSeek / Qwen / Gemini / Kimi / Claude Sonnet as non-preferred fallbacks | | | |
@@ -38,7 +39,7 @@ This fork enables the router in `.opencode/opencode.jsonc`:
 
 ```jsonc
 {
-  "model": "openrouter/z-ai/glm-5.3-flash",
+  "model": "openrouter/anthropic/claude-opus-4.7",
   "provider": {
     "openrouter": {
       "options": { "apiKey": "{env:OPENROUTER_API_KEY}" }
@@ -52,7 +53,7 @@ This fork enables the router in `.opencode/opencode.jsonc`:
         "force": true,
         "log": true,
         "typesafeApiKey": "{env:TYPESAFE_API_KEY}",
-        "defaultCodingModel": "z-ai/glm-5.3",
+        "defaultCodingModel": "anthropic/claude-opus-4.7",
         "defaultDesignModel": "openai/gpt-6-astra"
       }
     ]
@@ -79,6 +80,9 @@ In another project, copy the `provider` + `plugin` block from `examples/jev-rout
 | --- | --- | --- |
 | `enabled` | `true` | Master switch |
 | `typesafeApiKey` / `apiKey` | env `TYPESAFE_API_KEY` | TypeSafe key (use `{env:TYPESAFE_API_KEY}` in config) |
+| `defaultCodingModel` | unset | Pin coding turns to this OpenRouter slug when complexity allows |
+| `defaultDesignModel` | unset | Pin design turns to this OpenRouter slug when complexity allows |
+| `defaults` | `{}` | Per-kind pins: `{ "coding": "…", "design": "…" }` |
 | `force` | `true` | Route even if current model is not OpenRouter |
 | `log` | `true` | Print routing decisions to stderr |
 | `heuristicFallback` | `true` | Keyword fallback without TypeSafe |
