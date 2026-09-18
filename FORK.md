@@ -33,27 +33,28 @@ Edit `packages/jev-router/src/catalog.ts` or pass `catalog` in plugin options.
 
 ## Setup
 
+This fork enables the router in `.opencode/opencode.jsonc`:
+
+```jsonc
+{
+  "model": "openrouter/z-ai/glm-5.3-flash",
+  "provider": { "openrouter": { "options": {} } },
+  "plugin": [
+    ["../packages/jev-router/src/index.ts", { "enabled": true, "force": true, "log": true }]
+  ]
+}
+```
+
 ```bash
 export TYPESAFE_API_KEY=...
 export OPENROUTER_API_KEY=...
 
-# from this repo
 bun install
 bun run --cwd packages/jev-router test
-
-# run OpenCode with the example config
-bun run --cwd packages/opencode src/index.ts --config examples/jev-router/opencode.json
+bun run --cwd packages/opencode src/index.ts
 ```
 
-Or in any project `opencode.json`:
-
-```json
-{
-  "plugin": [["file:///absolute/path/to/opencode-jev/packages/jev-router/src/index.ts", { "enabled": true }]]
-}
-```
-
-Local discovery also loads `.opencode/plugins/jev-router.ts` when working inside this repo.
+In another project, point `plugin` at the package path (or copy the entry from `examples/jev-router/opencode.json`).
 
 ## Plugin options
 
