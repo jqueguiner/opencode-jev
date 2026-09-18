@@ -17,4 +17,6 @@
     "github-triage": false,
     "github-pr-search": false,
   },
+  // Jev router plugin is also auto-loaded from .opencode/plugins/jev-router.ts
+  // Requires TYPESAFE_API_KEY + OPENROUTER_API_KEY. See FORK.md.
 }

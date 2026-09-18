@@ -1,3 +1,5 @@
+> **Fork:** [`jqueguiner/opencode-jev`](https://github.com/jqueguiner/opencode-jev) — TypeSafe **Jev** auto-routes each turn to OpenRouter models (design → Astra, coding → GLM) by kind, complexity, and price. See [`FORK.md`](./FORK.md).
+
 <p align="center">
   <a href="https://opencode.ai">
     <picture>
