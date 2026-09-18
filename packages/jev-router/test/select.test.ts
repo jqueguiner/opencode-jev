@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { DEFAULT_CATALOG, blendPrice } from "../src/catalog"
+import { DEFAULT_CATALOG } from "../src/catalog"
 import { heuristicJudgment, selectModel } from "../src/select"
 import { parseJudgment, resolveApiKey } from "../src/typesafe"
 import { extractText } from "../src/route"

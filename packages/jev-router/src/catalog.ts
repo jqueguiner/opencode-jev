@@ -19,7 +19,7 @@ export type CatalogEntry = {
 export const PROVIDER_ID = "openrouter"
 
 /**
- * Curated OpenRouter list. Design prefers Astra; coding prefers GLM.
+ * Curated OpenRouter list. Design prefers Astra; coding default pin is Opus 4.7.
  * Selection filters by role + minComplexity, then prefers preferredFor, then cheapest blend.
  */
 export const DEFAULT_CATALOG: CatalogEntry[] = [
